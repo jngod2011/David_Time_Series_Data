@@ -1,5 +1,6 @@
 # David_Time_Series_Data
-analysis of time series data in David's paper
+analysis of time series data in David's paper  
+(http://www.biomedcentral.com/content/pdf/gb-2014-15-7-r89.pdf)
 
 # Data description:
 The dataset is comprised of three samples from two subjects: saliva from subject A, stool from subject A and B. 
