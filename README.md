@@ -9,9 +9,9 @@ xxx_day--date in a year. (need to add meta data in)
 # 1. Data preprocessing
 The order of preprocessing in the student's report are interpolation(spline), OTU clustering and Normalization.
 (However in their code is interpolation, normalization and OTU clustering...). My order are as follows.
- a. OTU clustering("phylumotu.m")\n
- b. Interpolation("interpotu.m")\n
- c. Normalization("normotu.m")\n
+ a. OTU clustering("phylumotu.m")  
+ b. Interpolation("interpotu.m")  
+ c. Normalization("normotu.m")  
 
 
 # 2. Periodicity analysis
