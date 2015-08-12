@@ -37,29 +37,61 @@ isaA_nphy=normotu(isaA_phy);
 istA_nphy=normotu(istA_phy);
 istB_nphy=normotu(istB_phy);
 
-plot(isaA_nphy');
+plot(saA_day(1):saA_day(end),isaA_nphy');
+xlabel('Day in a year');
+ylabel('Relative Abundance(%)');
 print('Figures/raw TS plots/norm_cubicinterp_OTU_phy_TS_saliva_A_mine','-dtiff');
-plot(istA_nphy');
+plot(stA_day(1):stA_day(end),istA_nphy');
+xlabel('Day in a year');
+ylabel('Relative Abundance(%)');
 print('Figures/raw TS plots/norm_cubicinterp_OTU_phy_TS_stool_A_mine','-dtiff');
-plot(istB_nphy');
+plot(stB_day(1):stB_day(end),istB_nphy');
+xlabel('Day in a year');
+ylabel('Relative Abundance(%)');
 print('Figures/raw TS plots/norm_cubicinterp_OTU_phy_TS_stool_B_mine','-dtiff');
 
 %% getting the periodiocity information
-%%%%%%%%%%%%%%%%%%%% FFT %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% 1. FFT on the whole time series (interpolated)
+
+% subject A relocated to Southeast Asia between day 71 and 122
+% ts= isaA_nphy(10,1:70-25);
+% ts= isaA_nphy(10,71-25:122-25);
+ts= isaA_nphy(10,123-25:364-25);
+ts_norm = ts-mean(ts);
 Fs = 1; % data were sampled once per day
 
+%%%%%%%%%%%%%%%%%%%% FFT %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% FFT on the whole time series (interpolated)
+%%%%%%%%% version 1 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 NFFT = 2^nextpow2(L); % Next power of 2 from length of y
+% NFFT = 128;
 
-y = fft(isaA_nphy(10,:)-mean(isaA_nphy(10,:)),NFFT,2);
+y = fft(ts_norm,NFFT,2);
 y = abs(y.^2); % raw power spectrum density
-L = length(isaA_nphy(1,:));
+L = length(ts_norm);
 f = Fs/2*linspace(0,1,NFFT/2+1);
 
 % Plot single-sided amplitude spectrum.
+figure
 plot(f,2*y(1:NFFT/2+1)) 
 title('Single-Sided Amplitude Spectrum of y(t)')
 xlabel('Frequency (Hz)')
 ylabel('|Y(f)|')
+%%%%%%%%% version 2 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+[pxx,f] = periodogram(ts_norm,[],[],Fs); % same as using fft
+figure
+plot(f,pxx)
+ax = gca;
+ax.XLim = [0 0.5];
+xlabel('Frequency (cycles/day)')
+ylabel('Magnitude')
+%%%%%%%%%%%%%%%%%%%% auto-correlation %%%%%%%%%%%%%%%%%%%%
+[autocor,lags] = xcorr(ts_norm,60*Fs,'coeff');
+figure
+plot(lags/Fs,autocor)
+xlabel('Lag (days)')
+ylabel('Autocorrelation')
+% axis([-21 21 -0.4 1.1])
+
 
 %%%%%%%%%%%%%%%%%%%% Lomb-Scargle method %%%%%%%%%%%%%%%%%
+% set the interpolated values back to NaNs
