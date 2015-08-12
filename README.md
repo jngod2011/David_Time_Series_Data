@@ -14,7 +14,7 @@ The order of preprocessing in the student's report are interpolation(spline), OT
  b. Interpolation("interpotu.m")  
  c. Normalization("normotu.m")  
 
-Several raw plots in the /Figure/raw TS plots shows some apparent visual difference between two types of preprocessing. The most obvious one is the stool B sample, where a lot of days have missing value towards the end.  
+Actually the change of order did not make much difference, but both contains negative interpolated values, which will be handled next.  
 
 It seems using spline interpolation will result in negative adbundance, especially for those time series with big gaps. After trying serveral other interpolation methods, cubic interpolation seems to give out the most realistic looking and non-negative interpolated values.  
 
