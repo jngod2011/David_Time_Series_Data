@@ -21,5 +21,11 @@ It seems using spline interpolation will result in negative adbundance, especial
 In the future, we may try Weiner's filter or Kalman filter to estimate missing values if necessary.
 
 # 2. Periodicity analysis
- a. examine power spectrum information, see if there's dominant frequencies representing periodical activities.
+ a. examine power spectrum density (PSD): look for dominant frequencies representing periodical activities.
     methods to try: FFT vs. Lomb-Scargle method(can handle missing values)
+ 
+ update: applied FFT and Lomb-Scargle method to look at PSD for different time region for subject A saliva samples. Figures and notes updated in figures.pptx and figures.pdf.
+ 
+ b. examine autocorrelogram: look for delay (period) with high autocorrelation. Figures and notes updated in figures.pptx and figures.pdf.
+ 
+In general, for saliva A sample, a shift of period from 30 days (in time region a) to 13 days (in time region b) is observed, and then it shifted back to a period greater than 30 days after his return( in time region c).
