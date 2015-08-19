@@ -29,7 +29,7 @@ load('DATA.mat');
 [stA_phy,stA_label]=phylumotu(stA_otu,OTU_label);
 [stB_phy,stB_label]=phylumotu(stB_otu,OTU_label);
 % 2. interpolation for the days with missing values
-isaA_phy=interpotu(saA_day,saA_phy);
+isaA_phy=interpotu(days,saA_phy);
 istA_phy=interpotu(stA_day,stA_phy);
 istB_phy=interpotu(stB_day,stB_phy);
 % 3. normalization for each day to get relative abundance
@@ -61,31 +61,18 @@ istB_nphy=normotu(istB_phy);
 % t_range = 26:70;
 % t_range = 71:122;
 % t_range = 123:364;
+time_ranges = [26 70;71 122;123 364];
 
-
+T = 3; %%%%% choose time region %%%%%%%%%%%%%
+t_range = time_ranges(T,1):time_ranges(T,2);
 
 %%%%% choose sample %%%%%%%%%%%%%%%%%%%%%%%%%
-%%%% saliva A %%%%%%%%%%%%%%%%%%% 
 days = saA_day; 
 i_nphy = isaA_nphy; 
 sample_name = 'saliva A';
 phy_label = saA_label;
 top_phys = [10 17 5 2 20];
-time_ranges = [26 70;71 122;123 364];
-%%%% stool A %%%%%%%%%%%%%%%%%%%%
-% days = stA_day; 
-% i_nphy = istA_nphy; 
-% sample_name = 'stool A';
-% phy_label = stA_label;
-% top_phys = [10 5 2 24 17];
-% time_ranges = [0 70;71 122;123 364];
-
-%%%% stool B %%%%%%%%%%%%%%%%%%%%
-
-
 %%%%% choose sample %%%%%%%%%%%%%%%%%%%%%%%%%
-T = 3; %%%%% choose time region %%%%%%%%%%%%%
-t_range = time_ranges(T,1):time_ranges(T,2);
 
 %%%%%% get time series of phylums with NaNs (raw data wo interpolation)
 % get the day indices for missing days
@@ -105,12 +92,11 @@ for i = top_phys
 plotTimeSeries(time_ranges,nphy_wNaN(i,:));
 end
 legend(saA_label(top_phys));
-plot([time_ranges(2,1) time_ranges(2,1)],[0 max(max(nphy_wNaN))],'k--');
-plot([time_ranges(3,1) time_ranges(3,1)],[0 max(max(nphy_wNaN))],'k--');
+plot([time_ranges(2,1) time_ranges(2,1)],[0 0.8],'k--');
+plot([time_ranges(3,1) time_ranges(3,1)],[0 0.8],'k--');
 xlabel('days')
 ylabel('relative abundance')
-print(['Figures/raw TS plots/',sample_name,' top 5'],'-dtiff')
-savefig(['Figures/raw TS plots/',sample_name,' top 5'])
+print('Figures/raw TS plots/saliva A top 5','-dtiff')
 
 
 %% getting the periodiocity information
@@ -139,7 +125,7 @@ Fs = 1; % data were sampled once per day
 figure
 hold on
 for i = top_phys
-    ts= i_nphy(i,t_range-(time_ranges(1)-1));
+    ts= i_nphy(i,t_range-25);
     plotFFTPSD(ts,Fs);
 end
 ax = gca;
@@ -150,35 +136,30 @@ title('FFT power spectrum')
 legend(saA_label(top_phys))
 % print('Figures/periodicity/FFT PSD example','-dtiff');
 print(['Figures/periodicity/FFT PSD ',sample_name,' T',num2str(T)],'-dtiff');
-savefig(['Figures/periodicity/FFT PSD ',sample_name,' T',num2str(T)]);
 
 %%%%%%%%%%%%%%%%%%%% Lomb-Scargle method %%%%%%%%%%%%%%%%%
 % set the interpolated values back to NaNs
 figure
 hold on
 for i = top_phys
-    ts_wNaN= nphy_wNaN(i,t_range-(time_ranges(1)-1));
+    ts_wNaN= nphy_wNaN(i,t_range-25);
     plotLSPSD(ts_wNaN,Fs);
 end
 xlabel('Frequency (day^{-1})');
 ylabel('PSD')
 title('Lomb-Scargle Power Spectrum')
 legend(saA_label(top_phys))
-ax = gca;
-ax.XLim = [0 0.5];
 print(['Figures/periodicity/Lomb-Scargle PSD ',sample_name,' T',num2str(T)],'-dtiff');
-savefig(['Figures/periodicity/Lomb-Scargle PSD ',sample_name,' T',num2str(T)]);
 
 %%%%%%%%%%%%%%%%%%%% auto-correlation %%%%%%%%%%%%%%%%%%%%
 figure
 hold on
 for i = top_phys
-    plotAuto(i_nphy(i,t_range-(time_ranges(1)-1)),Fs);
+    plotAuto(i_nphy(i,t_range-25),Fs);
 end
 xlabel('Lag (days)')
 ylabel('Autocorrelation')
 legend(saA_label(top_phys))
 print(['Figures/periodicity/autocorrelation ',sample_name,' T',num2str(T)],'-dtiff');
-savefig(['Figures/periodicity/autocorrelation ',sample_name,' T',num2str(T)]);
 
 % axis([-21 21 -0.4 1.1])
