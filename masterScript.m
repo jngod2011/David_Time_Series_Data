@@ -84,6 +84,8 @@ time_ranges = [26 70;71 122;123 364];
 
 
 %%%%% choose sample %%%%%%%%%%%%%%%%%%%%%%%%%
+
+Fs = 1; % data were sampled once per day
 T = 3; %%%%% choose time region %%%%%%%%%%%%%
 t_range = time_ranges(T,1):time_ranges(T,2);
 
@@ -118,24 +120,8 @@ savefig(['Figures/raw TS plots/',sample_name,' top 5'])
 
 %%%%%%%%%%%%%%%%%%%% FFT %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % FFT on the whole time series (interpolated)
-%%%%%%%%% version 1 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% L = length(ts_norm);
-% NFFT = 2^nextpow2(L); % Next power of 2 from length of y
-% % NFFT = 128;
-% 
-% y = fft(ts_norm,NFFT,2);
-% y = abs(y.^2); % raw power spectrum density
-% f = Fs/2*linspace(0,1,NFFT/2+1);
-% 
-% % Plot single-sided amplitude spectrum.
-% figure
-% plot(f,2*y(1:NFFT/2+1)) 
-% title('Single-Sided Amplitude Spectrum of y(t)')
-% xlabel('Frequency (Hz)')
-% ylabel('|Y(f)|')
-%%%%%%%%% version 2 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%% a. plotting magnitude of signal %%%%%%%%%%%%%%%%%%%%%%%%
 
-Fs = 1; % data were sampled once per day
 figure
 hold on
 for i = top_phys
@@ -151,6 +137,22 @@ legend(saA_label(top_phys))
 % print('Figures/periodicity/FFT PSD example','-dtiff');
 print(['Figures/periodicity/FFT PSD ',sample_name,' T',num2str(T)],'-dtiff');
 savefig(['Figures/periodicity/FFT PSD ',sample_name,' T',num2str(T)]);
+
+%%%% b. plotting phase of signal %%%%%%%%%%%%%%%%%%%%%%%%%%
+figure
+hold on
+for i = top_phys
+    ts= i_nphy(i,t_range-(time_ranges(1)-1));
+    plotFFTPhase(ts,Fs);
+end
+ax = gca;
+ax.XLim = [0 0.5];
+xlabel('Frequency (cycles/day)')
+ylabel('radians')
+title('FFT Phase response')
+legend(saA_label(top_phys))
+print(['Figures/periodicity/FFT phase response ',sample_name,' T',num2str(T)],'-dtiff');
+savefig(['Figures/periodicity/FFT phase response ',sample_name,' T',num2str(T)]);
 
 %%%%%%%%%%%%%%%%%%%% Lomb-Scargle method %%%%%%%%%%%%%%%%%
 % set the interpolated values back to NaNs
