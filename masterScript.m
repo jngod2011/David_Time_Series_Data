@@ -1,4 +1,4 @@
-clear;clc;close;
+clear;clc;close all;
 %% Preprocessing 
 % %%%%%% their version %%%%%%%%%%%%%%%%%%%%%%%
 % load('DATA.mat');
@@ -66,12 +66,12 @@ istB_nphy=normotu(istB_phy);
 
 %%%%% choose sample %%%%%%%%%%%%%%%%%%%%%%%%%
 %%%% saliva A %%%%%%%%%%%%%%%%%%% 
-days = saA_day; 
-i_nphy = isaA_nphy; 
-sample_name = 'saliva A';
-phy_label = saA_label;
-top_phys = [10 17 5 2 20];
-time_ranges = [26 70;71 122;123 364];
+% days = saA_day; 
+% i_nphy = isaA_nphy; 
+% sample_name = 'saliva A';
+% phy_label = saA_label;
+% top_phys = [10 17 5 2 20];
+% time_ranges = [26 70;71 122;123 364];
 %%%% stool A %%%%%%%%%%%%%%%%%%%%
 % days = stA_day; 
 % i_nphy = istA_nphy; 
@@ -81,7 +81,12 @@ time_ranges = [26 70;71 122;123 364];
 % time_ranges = [0 70;71 122;123 364];
 
 %%%% stool B %%%%%%%%%%%%%%%%%%%%
-
+days = stB_day; 
+interp_nphy = istB_nphy; 
+sample_name = 'stool B';
+phy_label = stB_label;
+top_phys = [5 10 24 17 26 2];
+time_ranges = [0 150;151 159;160 318];
 
 %%%%% choose sample %%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -95,7 +100,7 @@ days_all = days(1):days(end);
 NaN_days = setdiff(days_all,days)-days(1)+1;
 
 % set the days with missing values to NaN (on normalized phylum series)
-nphy_wNaN = i_nphy;
+nphy_wNaN = interp_nphy;
 nphy_wNaN(:,NaN_days)=NaN;
 
 %%%%%%%%%%%%%%  plotting raw data %%%%%%%%%%%%%%%%%%%%%
@@ -125,7 +130,7 @@ savefig(['Figures/raw TS plots/',sample_name,' top 5'])
 figure
 hold on
 for i = top_phys
-    ts= i_nphy(i,t_range-(time_ranges(1)-1));
+    ts= interp_nphy(i,t_range-(time_ranges(1)-1));
     plotFFTPSD(ts,Fs);
 end
 ax = gca;
@@ -142,7 +147,7 @@ savefig(['Figures/periodicity/FFT PSD ',sample_name,' T',num2str(T)]);
 figure
 hold on
 for i = top_phys
-    ts= i_nphy(i,t_range-(time_ranges(1)-1));
+    ts= interp_nphy(i,t_range-(time_ranges(1)-1));
     plotFFTPhase(ts,Fs);
 end
 ax = gca;
@@ -175,7 +180,7 @@ savefig(['Figures/periodicity/Lomb-Scargle PSD ',sample_name,' T',num2str(T)]);
 figure
 hold on
 for i = top_phys
-    plotAuto(i_nphy(i,t_range-(time_ranges(1)-1)),Fs);
+    plotAuto(interp_nphy(i,t_range-(time_ranges(1)-1)),Fs);
 end
 xlabel('Lag (days)')
 ylabel('Autocorrelation')
